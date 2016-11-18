@@ -4,6 +4,7 @@ let Fy = {} || Fy;
 Fy.objCrud = function(data, opts) {
 
    opts || (opts = {}); 
+
    let defaults = {
        mutable: false
    }
@@ -61,14 +62,13 @@ Fy.objCrud.prototype = {
 
          if (data[i].children !== undefined && data[i].children.length>0) {
 
-             parent = this.getParent(obj, data[i].children);
+             parent = this._getParent(obj, data[i].children);
              if (parent !== undefined) {
                   return parent;
              }
          }
 
-
-    } //end for
+       }
     },
     
     //add 
@@ -96,12 +96,14 @@ Fy.objCrud.prototype = {
         
     },
     
-    //delete
+    //remove
     remove: function(id) {
 
        this._checkData();
        let data = this.data; 
-       this._doRemove(id, data, true);
+       if (false === this._doRemove(id, data, true)) {
+           return false;
+       }
        return this.data;
     },
 
@@ -115,7 +117,7 @@ Fy.objCrud.prototype = {
                }
             }  
 
-            this._doRemove(id, data, false);  
+            return this._doRemove(id, data, false);  
         }
 
          for(var i=0;i<data.length;i++) {
@@ -126,43 +128,54 @@ Fy.objCrud.prototype = {
                        children.push(data[i].children[j]);
                    }
                  }
+                 let cacheChildren = data[i].children;
                  data[i].children = children;
-                 this._doRemove(id, data[i].children, false);
+                 if (cacheChildren.length > children.length) {
+                       return true;
+                 }
+                 return this._doRemove(id, data[i].children, false);
             }
          }
+
+         return false;
     },
-
+    
+    //edit
     edit: function(node) {
-
+        
         this._checkData();
         let data = this.data;
-        this._doEdit(node, data);
+
+        if (false === this._doEdit(node, data)) {
+            return false;
+        }
 
         return this.data;
     },
 
     _doEdit: function(node, data) {
-        for(var i=0;i<data.length;i++) {
+
+      for(var i=0;i<data.length;i++) {
 
       if (node.id == data[i].id) {
 
           for(let key in node) {
-
               if (key !== 'id') {
-                  data[i][key] = node[key];
+                 data[i][key] = node[key];
               }
           }
-        
         return true;
       }
       if (data[i].children !== undefined && data[i].children.length > 0) {
-        this._doEdit(node, data[i].children);
+        return this._doEdit(node, data[i].children);
       }
      }
+     return false;
     }
     
 }
 
+/* Usage examples */
 const data = [
     {id:1, title: 'foo', children:[]},
     {id:2, title:'bar', 
@@ -177,7 +190,7 @@ let crud = new Fy.objCrud(data); //immutable by default
 // let crud = new Fy.objCrud(); //immutable by default
 // console.log(crud.getData());
 // try {
-//     console.log(crud.add({id:9, title:'freeman', parent:2}));
+    console.log(crud.add({id:9, title:'freeman', parent:2}));
 // } catch(err) {
 //     console.log(err.message)
 // }
@@ -187,7 +200,7 @@ let crud = new Fy.objCrud(data); //immutable by default
 
 // console.log(crud.remove(2));
 // console.log(crud.remove(4));
-console.log(crud.edit({id: 1, title: 'new value'}));
-console.log(crud.edit({id: 4, title: 'shit', children:[]})[1].children)
+// console.log(crud.edit({id: 2, title: 'new value', }));
+// console.log(crud.edit({id: 4, title: 'shit', children:[]})[1].children)
 
 console.log('origin',data)
