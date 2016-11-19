@@ -70,7 +70,31 @@ Fy.objCrud.prototype = {
 
        }
     },
+    //find node by node id or key
+    find: function(node) {
+       
+       let data = this.data;
+       return this._doFind(node, data);
+
+    },
+    _doFind: function(node, data) {
+       
+       for(let i=0; i<data.length; i++) {
     
+           for(let key in node) {
+               if (data[i][key] !== undefined && data[i][key] == node[key]) {
+                   return data[i];
+               }
+           }
+
+           if (undefined !== data[i].children && data[i].children.length > 0) {
+               return this._doFind(node, data[i].children);
+           }
+       }
+
+       return false;
+    },
+
     //add 
     add: function(node) {
 
@@ -190,7 +214,7 @@ let crud = new Fy.objCrud(data); //immutable by default
 // let crud = new Fy.objCrud(); //immutable by default
 // console.log(crud.getData());
 // try {
-    console.log(crud.add({id:9, title:'freeman', parent:2}));
+    // console.log(crud.add({id:9, title:'freeman', parent:2}));
 // } catch(err) {
 //     console.log(err.message)
 // }
@@ -203,4 +227,6 @@ let crud = new Fy.objCrud(data); //immutable by default
 // console.log(crud.edit({id: 2, title: 'new value', }));
 // console.log(crud.edit({id: 4, title: 'shit', children:[]})[1].children)
 
+//find
+// console.log(crud.find({title:'bar car'}));
 console.log('origin',data)
