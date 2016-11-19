@@ -88,7 +88,10 @@ Fy.objCrud.prototype = {
            }
 
            if (undefined !== data[i].children && data[i].children.length > 0) {
-               return this._doFind(node, data[i].children);
+               let found = this._doFind(node, data[i].children);
+               if (found !== false) {
+                   return found;
+               }
            }
        }
 
@@ -207,7 +210,8 @@ const data = [
            {id:3, title:'bar bar', children:[], parent:2},
            {id:4, title:'bar car', children:[], parent:2}
      ]
-    }
+    },
+    {id:5, title: 'coo', children:[]},
     ];
 
 let crud = new Fy.objCrud(data); //immutable by default
@@ -229,4 +233,5 @@ let crud = new Fy.objCrud(data); //immutable by default
 
 //find
 // console.log(crud.find({title:'bar car'}));
+console.log(crud.find({id:5}));
 console.log('origin',data)
