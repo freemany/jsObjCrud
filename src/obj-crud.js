@@ -1,7 +1,4 @@
-
-let Fy = {} || Fy;
-
-Fy.objCrud = function(data, opts) {
+const ObjCrud = function(data, opts) {
 
    opts || (opts = {}); 
 
@@ -15,7 +12,7 @@ Fy.objCrud = function(data, opts) {
 };
 
 
-Fy.objCrud.prototype = {
+ObjCrud.prototype = {
 
     init: function() {},
 
@@ -200,38 +197,7 @@ Fy.objCrud.prototype = {
      return false;
     }
     
-}
+};
 
-/* Usage examples */
-const data = [
-    {id:1, title: 'foo', children:[]},
-    {id:2, title:'bar', 
-     children:[
-           {id:3, title:'bar bar', children:[], parent:2},
-           {id:4, title:'bar car', children:[], parent:2}
-     ]
-    },
-    {id:5, title: 'coo', children:[]},
-    ];
+module.exports = { ObjCrud };
 
-let crud = new Fy.objCrud(data); //immutable by default
-// let crud = new Fy.objCrud(); //immutable by default
-// console.log(crud.getData());
-// try {
-    // console.log(crud.add({id:9, title:'freeman', parent:2}));
-// } catch(err) {
-//     console.log(err.message)
-// }
-
-// console.log(crud.add({id:9, title:'freeman'}));
-// console.log(crud.getData());
-
-// console.log(crud.remove(2));
-// console.log(crud.remove(4));
-// console.log(crud.edit({id: 2, title: 'new value', }));
-// console.log(crud.edit({id: 4, title: 'shit', children:[]})[1].children)
-
-//find
-// console.log(crud.find({title:'bar car'}));
-console.log(crud.find({id:5}));
-console.log('origin',data)

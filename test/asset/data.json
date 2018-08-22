@@ -1,0 +1,10 @@
+[
+  {"id": 1, "title": "foo", "children":[]},
+  {"id": 2, "title": "bar",
+    "children": [
+      {"id": 3, "title":"bar bar", "children":[], "parent": 2},
+      {"id": 4, "title":"bar car", "children":[], "parent": 2}
+    ]
+  },
+  {"id": 5, "title": "coo", "children":[]}
+]
