@@ -1,6 +1,10 @@
 const data = require('../asset/data.json');
 const {ObjCrud} = require('../../src/obj-crud.js');
 
+function cloneData(data) {
+    return JSON.parse(JSON.stringify(data));
+}
+
 describe('ObjCrud.js', () => {
     describe('constructor', () => {
         it('should have method init', () => {
@@ -23,7 +27,7 @@ describe('ObjCrud.js', () => {
 
         it('should add without parent', () => {
             const node = {id: 9, title: 'freeman'};
-            let myData = JSON.parse(JSON.stringify(data));
+            let myData = cloneData(data);
             myData.push(node);
 
             const objCrud = new ObjCrud(data);
@@ -51,38 +55,72 @@ describe('ObjCrud.js', () => {
             objCrud.add(node);
             expect(objCrud.getData()).to.eql(expected);
         });
+
+        it('should remove node with id', () => {
+            const nodeId = 3;
+            const expected = [
+                {id: 1, title: "foo", children:[]},
+                {id: 2, title: "bar",
+                    children: [
+                        {id: 4, title:"bar car", children:[], "parent": 2}
+                    ]
+                },
+                {id: 5, title: "coo", children:[]}
+            ];
+
+            const objCrud = new ObjCrud(data);
+
+            objCrud.remove(nodeId);
+            expect(objCrud.getData()).to.eql(expected);
+        });
+
+        it('should find node', () => {
+            const node = {id: 4};
+            const expected = {id: 4, title:"bar car", children:[], "parent": 2};
+
+            const objCrud = new ObjCrud(data);
+
+            expect(objCrud.find(node)).to.eql(expected);
+        });
+
+        it('should find node with property', () => {
+            const node = {title:"bar car"};
+            const expected = {id: 4, title:"bar car", children:[], "parent": 2};
+
+            const objCrud = new ObjCrud(data);
+
+            expect(objCrud.find(node)).to.eql(expected);
+        });
+
+        it('should edit a child node with node', () => {
+            const node = {id: 4, title:"freeman", "parent": 2};
+            const expected = [
+                {id: 1, title: "foo", children:[]},
+                {id: 2, title: "bar",
+                    children: [
+                        {id: 3, title:"bar bar", children:[], "parent": 2},
+                        {children:[], id: 4, title:"freeman", "parent": 2},
+                    ]
+                },
+                {id: 5, title: "coo", children:[]}
+            ];
+
+            const objCrud = new ObjCrud(data);
+            objCrud.edit(node);
+            expect(objCrud.getData()).to.eql(expected);
+        });
+
+        it('should edit a parent node with node', () => {
+            const node = {id: 2, title:"freeman", children:[]};
+            const expected = [
+                {id: 1, title: "foo", children:[]},
+                {id: 2, title: "freeman", children:[]},
+                {id: 5, title: "coo", children:[]}
+            ];
+
+            const objCrud = new ObjCrud(data);
+            objCrud.edit(node);
+            expect(objCrud.getData()).to.eql(expected);
+        });
     });
 });
-/* Usage examples */
-// const data = [
-//     {id:1, title: 'foo', children:[]},
-//     {id:2, title:'bar',
-//         children:[
-//             {id:3, title:'bar bar', children:[], parent:2},
-//             {id:4, title:'bar car', children:[], parent:2}
-//         ]
-//     },
-//     {id:5, title: 'coo', children:[]},
-// ];
-//
-// let crud = new Fy.objCrud(data); //immutable by default
-// let crud = new Fy.objCrud(); //immutable by default
-// console.log(crud.getData());
-// try {
-// console.log(crud.add({id:9, title:'freeman', parent:2}));
-// } catch(err) {
-//     console.log(err.message)
-// }
-
-// console.log(crud.add({id:9, title:'freeman'}));
-// console.log(crud.getData());
-
-// console.log(crud.remove(2));
-// console.log(crud.remove(4));
-// console.log(crud.edit({id: 2, title: 'new value', }));
-// console.log(crud.edit({id: 4, title: 'shit', children:[]})[1].children)
-
-//find
-// console.log(crud.find({title:'bar car'}));
-// console.log(crud.find({id:5}));
-// console.log('origin',data)
