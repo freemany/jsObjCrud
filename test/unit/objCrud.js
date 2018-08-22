@@ -1,5 +1,5 @@
 const data = require('../asset/data.json');
-const {ObjCrud} = require('../../src/obj-crud.js');
+const ObjCrud = require('../../src/obj-crud.js');
 
 function cloneData(data) {
     return JSON.parse(JSON.stringify(data));

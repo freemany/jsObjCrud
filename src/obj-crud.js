@@ -199,5 +199,5 @@ ObjCrud.prototype = {
     
 };
 
-module.exports = { ObjCrud };
+module.exports = ObjCrud;
 
